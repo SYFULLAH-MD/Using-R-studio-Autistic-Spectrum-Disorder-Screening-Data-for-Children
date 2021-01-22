@@ -1,0 +1,21 @@
+library(caret) 
+library(rpart.plot)
+mydata<- read.csv(file.choose()) 
+str(mydata) 
+head(mydata) 
+set.seed(3033) 
+intrain<- createDataPartition(y=mydata$ASD, p=0.7, list=FALSE) 
+training<- mydata[intrain,] 
+testing<- mydata[-intrain] 
+dim(training) 
+dim(testing) 
+anyNA(mydata) 
+summary(mydata) 
+trctrl<- trainControl(method = "repeatedcv", number = 10, repeats = 3) 
+set.seed(3333) 
+dtree_fit_gini<- train(ASD ~., data = training, method = "rpart", 
+                       parms = list(split = "gini"), 
+                       trControl=trctrl, 
+                       tuneLength = 10) 
+dtree_fit_gini 
+prp(dtree_fit_gini$finalModel, box.palette = "Blues", tweak = 1.2)
